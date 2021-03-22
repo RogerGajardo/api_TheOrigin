@@ -15,14 +15,14 @@ router.get('/test-de-controller', ProductController.test);
 router.post('/test-de-controller', ProductController.datosProducto);
 
 //Rutas utiles
-router.post('/save', ProductController.save);
+router.post('/save-product', ProductController.saveProduct);
 router.get('/products', ProductController.getProducts);
 router.get('/products/:last?', ProductController.getProducts);
 router.get('/product/:id', ProductController.getProduct);
-router.put('/product/:id', ProductController.update);
-router.delete('/product/:id', ProductController.delete);
-router.post('/upload-image/:id', md_upload, ProductController.upload);
-router.get('/get-image/:image', ProductController.getImage);
-router.get('/search/:search', ProductController.search);
+router.put('/product/:id', ProductController.updateProduct);
+router.delete('/product/:id', ProductController.deleteProduct);
+router.post('/upload-image-product/:id', md_upload, ProductController.uploadProduct);
+router.get('/get-image-product/:image', ProductController.getImageProduct);
+router.get('/search-product/:search', ProductController.searchProduct);
 
 module.exports = router;

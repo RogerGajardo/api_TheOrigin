@@ -1,14 +1,14 @@
 'use-strict'
 
 const validator = require('validator');
-const Product = require('../models/product');
+const Article = require('../models/article');
 const fs = require('fs');
 const path = require('path');
-const { exists } = require('../models/product');
+const { exists } = require('../models/article');
 
 const controller = {
 
-    datosProducto: (req, res) => {
+    datosActicle: (req, res) => {
         return res.status(200).send({
             status: 'success',
             web: 'The Origin',
@@ -18,11 +18,11 @@ const controller = {
     test: (req, res) => {
         return res.status(200).send({
             status: 'success',
-            message: 'Soy la Accion test de mi controller de productos'
+            message: 'Soy la Accion test de mi controller de articulos'
         });
     },
 
-    saveProduct: (req, res) => {
+    saveArticle: (req, res) => {
 
         //Recargar parametros por post
 
@@ -34,7 +34,6 @@ const controller = {
 
             var validate_name = !validator.isEmpty(params.name);
             var validate_description = !validator.isEmpty(params.description);
-            var validate_precio = !validator.isEmpty(params.precio);
             
         } catch (err) {
             return res.status(404).send({
@@ -43,32 +42,31 @@ const controller = {
             });
         }
         
-        if (validate_name && validate_description && validate_precio) {
+        if (validate_name && validate_description) {
 
             //Crear el objeto a guardar
-            const product = new Product();
+            const article = new Article();
 
             //Asignar valores
-            product.name = params.name;
-            product.description = params.description;
-            product.image = null;
-            product.precio = params.precio;
+            article.name = params.name;
+            article.description = params.description;
+            article.image = null;
 
-            //Guardar el producto
+            //Guardar el articulo
 
-            product.save((err, productStored) => {
+            article.save((err, articleStored) => {
 
-                if (err || !productStored) {
+                if (err || !articleStored) {
                     return res.status(500).send({
                         status: 'error',
-                        message: 'El producto no se a guardado'
+                        message: 'El articulo no se a guardado'
                     });
                 }
 
                 //Devolver una respuesta
                 return res.status(200).send({
                     status: 'success',
-                    product: productStored
+                    article: articleStored
                 });
             });
 
@@ -81,10 +79,10 @@ const controller = {
         }
     },
 
-    getProducts: (req, res) => {
+    getArticles: (req, res) => {
 
 
-        const query = Product.find( {} );
+        const query = Article.find( {} );
 
         const last = req.params.last;
         if (last || last != undefined) {
@@ -95,48 +93,48 @@ const controller = {
 
         //Find para obtener los obbjetos de la db
         //sort('-_id') hace que se pordene de forma desc, sin '-' asc
-        query.sort('-_id').exec(( err, products ) =>{
+        query.sort('-_id').exec(( err, articles ) =>{
 
             if ( err ) {
                 return res.status(500).send({
                     status: 'error',
-                    message: 'Error al devolver los productos'
+                    message: 'Error al devolver los articulos'
                 });
-            }if ( !products ) {
+            }if ( !articles ) {
                 return res.status(404).send({
                     status: 'error',
-                    message: 'No hay productos para mostrar'
+                    message: 'No hay articulos para mostrar'
                 });
             }else{
                 return res.status(200).send({
                     status: 'success',
-                    products
+                    articles
                 });
             }
         });
     }, 
 
-    getProduct: (req, res) => {
+    getArticle: (req, res) => {
 
 
         //Recoger id de url
 
-        const productID = req.params.id;
+        const articleID = req.params.id;
 
         //Validar datos
 
-        if ( !productID || productID == null) {
+        if ( !articleID || articleID == null) {
             return res.status(404).send({
                 status: 'error',
-                message: 'No existe el producto'
+                message: 'No existe el articulo'
             });
         }
 
-        //Buscar producto
+        //Buscar articULO
 
-        Product.findById( productID, ( err, product ) => {
+        Article.findById( articleID, ( err, article ) => {
 
-            if ( !product || err ) {
+            if ( !article || err ) {
                 return res.status(500).send({
                     status: 'error',
                     message: 'No existe el articulo'
@@ -146,16 +144,16 @@ const controller = {
             //Devolverlo en JSON        
             return res.status(200).send({
                 status: 'success',
-                product
+                article
             });
         })        
     },
 
-    updateProduct: (req, res ) => {
+    updateArticle: (req, res ) => {
 
-        //Recoger el id del producto por la url
+        //Recoger el id del articulo por la url
 
-        const productID = req.params.id;
+        const articleID = req.params.id;
 
         //Recoger los datos que llegan por put
 
@@ -167,7 +165,6 @@ const controller = {
             
             var validate_name = !validator.isEmpty(params.name);
             var validate_description = !validator.isEmpty(params.description);
-            var validate_precio = !validator.isEmpty(params.precio);
 
         } catch (err) {
 
@@ -178,10 +175,10 @@ const controller = {
             
         }
 
-        if (validate_name && validate_description && validate_precio) {
+        if (validate_name && validate_description ) {
 
             //Find and update
-            Product.findOneAndUpdate({ _id: productID }, params, { new: true }, ( err, productUpdated ) => {
+            Article.findOneAndUpdate({ _id: articleID }, params, { new: true }, ( err, articleUpdated ) => {
 
                 if (err) {
                     return res.status(500).send({
@@ -193,14 +190,14 @@ const controller = {
                 if (err) {
                     return res.status(404).send({
                         status: 'error',
-                        message: 'No existe el producto'
+                        message: 'No existe el articulo'
                     });
                 }
                 
                 //Devolver respuesta
                 return res.status(200).send({
                     status: 'success',
-                    product: productUpdated
+                    article: articleUpdated
                 });
             } );
             
@@ -212,13 +209,13 @@ const controller = {
         }
     },
 
-    deleteProduct: (req, res) => {
+    deleteArticle: (req, res) => {
 
         //Recoger ide de url
-        const productID = req.params.id;
+        const articleID = req.params.id;
 
         //Find and delete
-        Product.findOneAndDelete( { _id: productID }, (err, productRemoved ) => {
+        Article.findOneAndDelete( { _id: articleID }, (err, articleRemoved ) => {
             
             if (err) {
                 return res.status(500).send({
@@ -227,23 +224,23 @@ const controller = {
                 });
             }
 
-            if ( !productRemoved ) {
+            if ( !articleRemoved ) {
                 return res.status(404).send({
                     status: 'error',
-                    message: 'No se ha borrado el producto, posiblemente no exista'
+                    message: 'No se ha borrado el articulo, posiblemente no exista'
                 });
             }
 
             return res.status(200).send({
                 status: 'success',
-                product: productRemoved
+                article: articleRemoved
             });
         });
     },
 
-    uploadProduct: (req, res) => {
+    uploadArticle: (req, res) => {
 
-        //Configurtar el modulo connect multiparty routes/product.js (Hecho)
+        //Configurtar el modulo connect multiparty routes/article.js (Hecho)
 
         //Recoger el fichero de la particion
         var file_name = 'Imagen no subida...';
@@ -284,14 +281,14 @@ const controller = {
         }else{
             //Si todo es valido, sacando id de la url
 
-            let productId = req.params.id;
+            let articleId = req.params.id;
 
             //Buscar el articulo, asignarle el nombre de la imagen y actualizarlo
 
-            Product.findOneAndUpdate({ _id: productId }, { image: file_name}, { new: true}, (err, productUpdated) => { 
+            Article.findOneAndUpdate({ _id: articleId }, { image: file_name}, { new: true}, (err, articleUpdated) => { 
 
 
-                if (err || !productUpdated) {
+                if (err || !articleUpdated) {
 
                     return res.status(200).send({
                         status: 'error',
@@ -301,7 +298,7 @@ const controller = {
 
                 return res.status(200).send({
                     status: 'success',
-                    Product: productUpdated
+                    Article: articleUpdated
                 });
 
             });
@@ -311,10 +308,10 @@ const controller = {
 
     }, //end upload file
 
-    getImageProduct: (req, res) => {
+    getImageArticle: (req, res) => {
 
         const file = req.params.image;
-        let path_file = './upload/products/'+file;
+        let path_file = './upload/articles/'+file;
 
         fs.exists(path_file, (exists) => {
 
@@ -332,19 +329,19 @@ const controller = {
         })
     }, //end getImage
 
-    searchProduct: (req, res) => {
+    searchArticle: (req, res) => {
 
         //Sacar el string a buscar
 
         const searchString = req.params.search;
 
         //Find or
-        Product.find({ "$or": [
+        Article.find({ "$or": [
             { "name": { "$regex": searchString, "$options": "i"}},
             { "description": { "$regex": searchString, "$options": "i"}}
         ]})
         .sort([['date', 'descending']])
-        .exec((err, products) => {
+        .exec((err, articles) => {
 
             console.log(searchString);
 
@@ -355,16 +352,16 @@ const controller = {
                 });
             }
 
-            if (!products || products.length <= 0) {
+            if (!articles || articles.length <= 0) {
                 return res.status(404).send({
                     status: 'error',
-                    message: 'No hay productos que coincidan con tu busqueda!'
+                    message: 'No hay articulos que coincidan con tu busqueda!'
                 });
             }
 
             return res.status(200).send({
                 status: 'success',
-                products
+                articles
             });
         })
     }// end search

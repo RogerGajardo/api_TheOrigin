@@ -10,6 +10,7 @@ const app = express();
 
 // Cargar ficheros rutas
 const product_routes = require('./routes/product');
+const article_routes = require('./routes/article');
 
 //Middlewares (algo que se ejecuta antes de cargar una ruta o url de la app)
 
@@ -27,7 +28,8 @@ app.use((req, res, next) => {
 });
 
 //A;adir prefijos a rutas
-app.use('/api', product_routes);
+app.use('/api/products', product_routes);
+app.use('/api/articles', article_routes);
 
 //Ruta o metodo de prueba para el API REST
 // app.get('/probando', (req, res) => {
